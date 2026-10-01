@@ -1,0 +1,709 @@
+/* Hista Digital — Konzept „Die Wabe" · 25.09.2026
+   Tokens: EIN Radius (--r 24 / --r-klein 12 / Pille), EIN Sektionsabstand, Sechseck als Signaturform. */
+:root{
+  --nacht:#000017; --tiefe:#0a0a24; --karte:#12122e; --karte-2:#181838;
+  --linie:rgba(255,255,255,.10); --linie-2:rgba(255,255,255,.18);
+  --gold:#f8b800; --gold-tief:#b88a00; --gold-hell:#ffd452;
+  --weiss:#ffffff; --text:#e9e9f2; --text-2:#b4b4c8; --text-3:#8a8aa6;
+  --rot:#ff5a5a; --gruen:#3ddc97;
+  --r:24px; --r-klein:12px; --pille:999px;
+  --sekt:112px; --pad:32px; --gap:24px; --kopf:84px;
+  --breite:1240px; --rand:28px;
+  --schrift:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+  --display:"Red Hat Display",var(--schrift);
+  --hex:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  --hex-hoch:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  --dauer:.34s; --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--nacht);color:var(--text);font:400 16px/1.6 var(--schrift);overflow-x:clip;text-wrap:pretty}
+img,video,svg{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+[hidden]{display:none!important}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.04;margin:0;text-wrap:balance;overflow-wrap:break-word;color:var(--weiss)}
+h1{font-size:clamp(2.1rem,4vw,3.7rem);letter-spacing:-.03em}
+h2{font-size:clamp(1.75rem,3.3vw,3rem);letter-spacing:-.025em}
+h3{font-size:clamp(1.25rem,1.7vw,1.5rem);letter-spacing:-.01em;line-height:1.2}
+p{margin:0}
+.wrap{width:100%;max-width:var(--breite);margin-inline:auto;padding-inline:var(--rand)}
+.wrap.eng{max-width:900px}
+.wrap.weit{max-width:1440px}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.kicker::before{content:"";width:14px;height:16px;background:var(--gold);clip-path:var(--hex-hoch);flex:none}
+.lead{font-size:clamp(1.05rem,1.35vw,1.25rem);color:var(--text-2);line-height:1.55;max-width:62ch}
+.sekt{padding-block:var(--sekt);position:relative}
+.sekt.pt0{padding-top:0}
+.sekt.tief + .sekt.pt0{padding-top:calc(var(--sekt) * .6)}  /* Karte klebt nie am dunklen Band davor */
+main > .sekt:last-child{padding-bottom:0}  /* Abstand zum Fuß kommt nur vom Fuß */
+.sekt.tief{background:var(--tiefe);border-radius:var(--r);margin-inline:16px}
+.sekt.papier{background:var(--papier,#f6f4ec);color:#12122e}
+.sekt.papier h2,.sekt.papier h3{color:#0a0a24}
+.sekt.papier .lead{color:#3c3c56}
+.kopfzeile{display:grid;gap:18px;max-width:760px;margin-bottom:56px}
+.kopfzeile.mitte{margin-inline:auto;text-align:center;justify-items:center}
+.gold{color:var(--gold)}
+/* Einspaltige Raster: die Spur ist minmax(0,1fr), sonst wächst sie auf max-content (Hero-H1 607 px in 350 px, gemessen 25.09.) */
+.hero-in,.kopfzeile,.duo .text,.duo .bild,.system-tafel .text,.rueckruf .text,.kontakt-info,.zelle-k,.zahl,.wert,.station,.recht,.faq .links,.faq .frage-fehlt,.formular,.formular label,.anzeige .text,.weg,.hero .fakten div,.cta-band,.wand,#intro .kern,.anzeige .mess div{grid-template-columns:minmax(0,1fr)}
+.g2{display:grid;gap:var(--gap);grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{display:grid;gap:var(--gap);grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{display:grid;gap:var(--gap);grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{display:grid;gap:var(--gap);grid-template-columns:repeat(5,minmax(0,1fr))}
+
+/* ---------- Knöpfe ---------- */
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:var(--pille);font-weight:800;font-size:15px;letter-spacing:.01em;position:relative;overflow:hidden;transition:transform var(--dauer) var(--ease),background var(--dauer),box-shadow var(--dauer);white-space:nowrap}
+.knopf svg{width:18px;height:18px;flex:none}
+.knopf.gold{background:var(--gold);color:#12122e}
+.knopf.gold:hover{background:var(--gold-hell);transform:translateY(-2px);box-shadow:0 12px 30px rgba(248,184,0,.28)}
+.knopf.gold::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--ease)}
+.knopf.gold:hover::after{transform:translateX(120%)}
+.knopf.glas{background:rgba(255,255,255,.08);color:var(--weiss);border:1px solid var(--linie-2);backdrop-filter:blur(10px)}
+.knopf.glas:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}
+.knopf.dunkel{background:#12122e;color:var(--weiss)}
+.knopf.dunkel:hover{background:#1c1c40;transform:translateY(-2px)}
+.knopf:active{transform:scale(.97)!important;transition-duration:.1s}
+.knopf:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* ---------- Kopf ---------- */
+.kopf{position:fixed;inset:0 0 auto 0;z-index:60;height:var(--kopf);transition:background var(--dauer),border-color var(--dauer)}
+.kopf::before{content:"";position:absolute;inset:0;background:rgba(0,0,23,.0);backdrop-filter:blur(0);transition:background var(--dauer),backdrop-filter var(--dauer);z-index:-1;border-bottom:1px solid transparent}
+.kopf.fest::before{background:rgba(0,0,23,.78);backdrop-filter:blur(18px) saturate(160%);border-bottom-color:var(--linie)}
+.kopf > .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.marke{display:inline-flex;align-items:center;padding:14px 0;margin:-14px 0}
+.marke img{height:38px;width:auto}
+.nav{display:flex;align-items:center;gap:6px}
+.nav > a,.nav > .hat-menu > a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:var(--pille);font-weight:700;font-size:15px;color:var(--text);transition:background var(--dauer),color var(--dauer)}
+.nav > a:hover,.nav > .hat-menu > a:hover,.nav > a.aktiv,.nav > .hat-menu > a.aktiv{background:rgba(255,255,255,.08);color:var(--weiss)}
+.nav > a.knopf{color:#12122e;padding:0 22px;min-height:46px;margin-left:8px}
+.nav > a.knopf:hover{color:#12122e}
+.hat-menu{position:relative}
+.hat-menu > a svg{width:14px;height:14px;margin-left:6px;transition:transform var(--dauer)}
+.hat-menu:hover > a svg,.hat-menu:focus-within > a svg{transform:rotate(180deg)}
+.drop{position:absolute;top:calc(100% + 10px);left:0;min-width:320px;background:rgba(14,14,38,.96);backdrop-filter:blur(20px);border:1px solid var(--linie-2);border-radius:var(--r);padding:10px;display:grid;gap:2px;opacity:0;visibility:hidden;transform:translateY(8px) scale(.98);transform-origin:top left;transition:opacity var(--dauer),transform var(--dauer),visibility var(--dauer);box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.drop::before{content:"";position:absolute;top:-8px;left:26px;width:14px;height:14px;background:rgba(14,14,38,.96);border-left:1px solid var(--linie-2);border-top:1px solid var(--linie-2);transform:rotate(45deg)}
+.hat-menu:hover .drop,.hat-menu:focus-within .drop{opacity:1;visibility:visible;transform:none}
+.drop a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-klein);min-height:44px;font-size:14.5px;font-weight:600;color:var(--text)}
+.drop a:hover{background:rgba(248,184,0,.12);color:var(--weiss)}
+.drop a svg{width:22px;height:22px;color:var(--gold);flex:none}
+.drop a.alle{border-top:1px solid var(--linie);margin-top:6px;padding-top:12px;color:var(--gold)}
+.sprachen{display:flex;gap:4px;padding:4px;border:1px solid var(--linie-2);border-radius:var(--pille);background:rgba(255,255,255,.04)}
+.sprachen a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:36px;border-radius:var(--pille);transition:background var(--dauer)}
+.sprachen a:hover{background:rgba(255,255,255,.1)}
+.sprachen a.aktiv{background:rgba(248,184,0,.18)}
+.sprachen svg{width:22px;height:16px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.mobil-rechts{display:none!important}.burger{display:none;width:48px;height:48px;border-radius:var(--pille);align-items:center;justify-content:center;border:1px solid var(--linie-2)}
+.burger svg{width:22px;height:22px}
+#mobilmenu{position:fixed;top:var(--kopf);left:0;right:0;height:calc(100svh - var(--kopf));background:var(--nacht);z-index:59;overflow:auto;padding:24px var(--rand) 40px;visibility:hidden;opacity:0;transform:translateY(-10px);transition:opacity var(--dauer),transform var(--dauer),visibility var(--dauer)}
+#mobilmenu.offen{visibility:visible;opacity:1;transform:none}
+#mobilmenu a{display:flex;align-items:center;min-height:52px;padding:8px 12px;border-radius:var(--r-klein);font-size:18px;font-weight:700;border-bottom:1px solid var(--linie)}
+#mobilmenu .unter a{font-size:15.5px;font-weight:600;color:var(--text-2);padding-left:28px;min-height:46px}
+#mobilmenu .knopf{margin-top:22px;border:0;justify-content:center}
+body.menu-offen{overflow:hidden}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;align-items:end;overflow:hidden;border-radius:0 0 var(--r) var(--r);background:var(--nacht)}
+.hero.klein{min-height:100svh}
+.hero.hero-ueber video,.hero.hero-ueber .poster{opacity:1;object-position:74% 30%}  /* Gründerfoto rechts, Text links auf Nachtblau */
+.hero.hero-ueber::before{background:linear-gradient(95deg,rgba(0,0,23,.9) 0%,rgba(0,0,23,.55) 34%,rgba(0,0,23,0) 55%),linear-gradient(0deg,var(--nacht) 0%,rgba(0,0,23,.1) 25%,transparent 45%)}
+.hero .poster{display:none}
+.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;transform:scale(1.02);animation:zoom 40s ease-in-out infinite alternate}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(95deg,rgba(0,0,23,.96) 0%,rgba(0,0,23,.86) 36%,rgba(0,0,23,.45) 64%,rgba(0,0,23,.3) 100%),linear-gradient(0deg,var(--nacht) 0%,rgba(0,0,23,.2) 30%,transparent 60%);z-index:1}
+.hero .wrap{position:relative;z-index:2;padding-top:calc(var(--kopf) + 60px);padding-bottom:180px;display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:center}
+.hero-in > h1{max-width:15ch}
+.hero.klein .wrap{grid-template-columns:minmax(0,1fr);padding-bottom:120px;padding-top:calc(var(--kopf) + 72px)}
+.hero.klein.mit-leiste .wrap{padding-bottom:200px}
+.hero-in{display:grid;gap:22px;justify-items:stretch;min-width:0}
+.hero-in > .kicker,.hero-in > .knoepfe{justify-self:start}
+.hero-in .lead{max-width:56ch}
+.hero-in .knoepfe{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.hero-in .h1-ort{display:block;font-size:.42em;font-weight:700;letter-spacing:.02em;color:var(--text-2);margin-top:14px;font-family:var(--schrift)}
+.hero .pause{position:absolute;right:24px;top:calc(var(--kopf) + 14px);z-index:3;width:44px;height:44px;border-radius:var(--pille);border:1px solid var(--linie-2);background:rgba(0,0,23,.5);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center}
+.hero .pause svg{width:16px;height:16px}
+.hero .fakten{display:flex;gap:26px;flex-wrap:wrap;margin-top:12px}
+.hero .fakten div{display:grid;gap:2px}
+.hero .fakten b{font-family:var(--display);font-size:1.6rem;color:var(--gold);line-height:1}
+.hero .fakten span{font-size:13.5px;color:var(--text-2)}
+@keyframes zoom{to{transform:scale(1.12)}}
+
+/* Die Wabe im Hero */
+.wabe{position:relative;aspect-ratio:1;max-width:560px;width:100%;justify-self:end}
+.wabe svg{width:100%;height:100%;overflow:hidden}
+.wabe .zelle{fill:rgba(255,255,255,.035);stroke:rgba(255,255,255,.22);stroke-width:1.5;transition:fill .6s var(--ease),stroke .6s var(--ease)}
+.wabe .zelle.voll{fill:rgba(248,184,0,.16);stroke:rgba(248,184,0,.55)}
+.wabe .zelle.luecke{fill:transparent;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 6;animation:luecke 1.6s linear infinite}
+.wabe .kandidat{fill:var(--gold);stroke:var(--gold-hell);stroke-width:1.5;filter:drop-shadow(0 8px 24px rgba(248,184,0,.45));transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .5s;transform-box:fill-box;transform-origin:center}
+.wabe .kandidat.hinein{transform:translate(var(--dx),var(--dy))}
+.wabe .kandidat.weg{opacity:0;transform:translate(var(--dx),var(--dy))}
+.wabe .kandidat.warten{opacity:0;transform:translate(30px,-70px)}
+.wabe .schild{font:800 13px var(--schrift);fill:#12122e;text-anchor:middle;letter-spacing:.06em;pointer-events:none}
+.wabe .schild.hell{fill:rgba(255,255,255,.7);font-weight:700}
+.wabe .prueft{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:4 5;opacity:0;transition:opacity .4s}
+.wabe .prueft.an{opacity:1;animation:dreh 3s linear infinite;transform-box:fill-box;transform-origin:center}
+.wabe .hinweis{position:absolute;left:0;bottom:-8px;display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--text-2);background:rgba(0,0,23,.55);backdrop-filter:blur(8px);border:1px solid var(--linie);border-radius:var(--pille);padding:8px 14px 8px 10px}
+.wabe .hinweis i{width:10px;height:12px;background:var(--gold);clip-path:var(--hex-hoch);display:block}
+@keyframes luecke{to{stroke-dashoffset:-24}}
+@keyframes dreh{to{transform:rotate(360deg)}}
+
+/* ---------- Kachel-Leiste (fünf Zellen) ---------- */
+.zellen{margin-top:-96px;position:relative;z-index:3}
+.zellen .g5{gap:16px}
+.zelle-k{display:grid;gap:12px;padding:22px 20px 20px;background:rgba(18,18,46,.82);backdrop-filter:blur(14px);border:1px solid var(--linie-2);border-radius:var(--r);min-height:172px;transition:transform var(--dauer) var(--ease),border-color var(--dauer),background var(--dauer);position:relative;overflow:hidden}
+.zelle-k::after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:100px;background:var(--gold);clip-path:var(--hex-hoch);opacity:.08;transition:opacity var(--dauer),transform var(--dauer)}
+.zelle-k:hover{transform:translateY(-4px);border-color:rgba(248,184,0,.5);background:rgba(24,24,58,.9)}
+.zelle-k:hover::after{opacity:.2;transform:scale(1.15)}
+.zelle-k .nr{font:800 13px var(--display);color:var(--gold);letter-spacing:.14em}
+.zelle-k svg{width:30px;height:30px;color:var(--gold)}
+.zelle-k b{font-family:var(--display);font-size:15.5px;line-height:1.25;color:var(--weiss);display:block;min-height:2.5em}
+.zelle-k{position:relative}
+.zelle-k > span{font-size:13.5px;color:var(--text-2);line-height:1.4}
+.zelle-k .mehr{display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-size:13.5px;font-weight:800;color:var(--gold);letter-spacing:.02em}
+.zelle-k .mehr svg{width:16px;height:16px;transition:transform var(--dauer)}
+.zelle-k:hover .mehr svg{transform:translateX(4px)}
+
+/* ---------- Problem: fünf Wege, durchgestrichen ---------- */
+.wege{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:44px}
+.weg{display:grid;justify-items:center;gap:12px;text-align:center;position:relative;padding:26px 14px 22px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);transition:transform var(--dauer) var(--ease),border-color var(--dauer)}
+.weg:hover{transform:translateY(-4px);border-color:var(--linie-2)}
+.weg .hexi{width:76px;height:86px;background:rgba(248,184,0,.12);clip-path:var(--hex-hoch);display:grid;place-items:center;position:relative;transition:background var(--dauer)}
+.weg .hexi svg{width:32px;height:32px;color:var(--gold)}
+.weg b{font-family:var(--display);font-size:15px;color:var(--weiss)}
+.weg span{font-size:13.5px;color:var(--text-2);line-height:1.4}
+.weg .strich{position:absolute;left:50%;top:26px;width:76px;height:86px;transform:translateX(-50%);pointer-events:none}
+.weg .strich line{stroke:var(--rot);stroke-width:4;stroke-linecap:round;stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset .7s var(--ease)}
+.weg.gestrichen .strich line{stroke-dashoffset:0}
+.weg.gestrichen .hexi{background:rgba(255,90,90,.12)}
+.weg.gestrichen .hexi svg{color:var(--text-3)}
+.weg.ende{background:linear-gradient(135deg,rgba(255,90,90,.16),rgba(255,90,90,.04));border-color:rgba(255,90,90,.35);padding:26px 22px;align-content:center;opacity:.45;transform:scale(.96);transition:opacity .6s,transform .6s var(--ease)}
+.weg.ende span{display:grid;justify-items:center;gap:12px;font-family:var(--display);font-weight:800;font-size:clamp(1.15rem,1.6vw,1.4rem);line-height:1.2;color:var(--weiss)}
+.weg.ende svg{width:26px;height:26px;color:var(--rot)}
+.wege.fertig .weg.ende{opacity:1;transform:none}
+.wege.fertig .weg.ende::before{content:"";position:absolute;inset:-6px;border-radius:calc(var(--r) + 6px);border:2px solid var(--rot);opacity:0;animation:ring 1.4s var(--ease) .2s 1}
+@keyframes ring{0%{opacity:.8;transform:scale(.96)}100%{opacity:0;transform:scale(1.08)}}
+
+/* ---------- Social: zwei Anzeigen + Diagnose ---------- */
+.diagnose{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:stretch}
+.anzeigen{position:relative;min-height:640px;height:100%}
+.anzeigen img{position:absolute;width:56%;height:auto;border-radius:var(--r);box-shadow:0 30px 80px rgba(0,0,0,.6);border:1px solid var(--linie-2);transition:transform .6s var(--ease)}
+.anzeigen img:first-child{left:3%;top:0;transform:rotate(-6deg) translateY(var(--py,0))}
+.anzeigen img:last-of-type{right:3%;bottom:0;transform:rotate(5deg) translateY(var(--py,0))}
+.anzeigen:hover img:first-child{transform:rotate(-2deg) translateY(calc(var(--py,0) - 8px))}
+.anzeigen:hover img:last-of-type{transform:rotate(1deg) translateY(calc(var(--py,0) - 8px))}
+.anzeigen .stempel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);padding:10px 18px;border:3px solid var(--rot);color:var(--rot);font:800 14px var(--display);letter-spacing:.16em;text-transform:uppercase;border-radius:var(--r-klein);background:rgba(0,0,23,.7);backdrop-filter:blur(6px)}
+.diagnose-liste{display:grid;gap:12px;margin-top:28px}
+.diagnose-liste div{display:flex;gap:14px;align-items:center;padding:16px 18px;background:var(--karte);border:1px solid var(--linie);border-radius:var(--r);transition:transform var(--dauer),border-color var(--dauer)}
+.diagnose-liste div:hover{transform:translateX(6px);border-color:rgba(255,90,90,.4)}
+.diagnose-liste svg{width:22px;height:22px;color:var(--rot);flex:none}
+.these{margin-top:30px;padding:24px 28px;border-radius:var(--r);background:linear-gradient(135deg,rgba(248,184,0,.16),rgba(248,184,0,.04));border:1px solid rgba(248,184,0,.35);font-family:var(--display);font-size:clamp(1.15rem,1.6vw,1.45rem);line-height:1.3;color:var(--weiss)}
+.these b{color:var(--gold)}
+
+/* ---------- Das System: Bühne mit fünf Reitern ---------- */
+.system-reiter{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:26px}
+.system-reiter button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 12px;border-radius:var(--pille);border:1px solid var(--linie);background:var(--karte);position:relative;overflow:hidden;transition:border-color var(--dauer),background var(--dauer),transform var(--dauer)}
+.system-reiter button:hover{transform:translateY(-3px);border-color:var(--linie-2)}
+.system-reiter button.aktiv{border-color:rgba(248,184,0,.6);background:var(--karte-2)}
+.system-reiter button .nr{font:800 13px var(--display);color:var(--gold);letter-spacing:.14em}
+.system-reiter button b{font-family:var(--display);font-size:13.5px;line-height:1.25;color:var(--weiss);white-space:nowrap}
+.system-reiter button .nr{display:none}
+.system-reiter button .lauf{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left}
+.system-reiter button.aktiv .lauf{animation:lauf 6s linear forwards}
+.system-reiter button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@keyframes lauf{to{transform:scaleX(1)}}
+.system-buehne{position:relative;border-radius:var(--r);overflow:hidden;background:var(--karte);border:1px solid var(--linie)}
+.system-tafel{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;opacity:0;visibility:hidden;transition:opacity .5s var(--ease),visibility .5s}
+.system-tafel.aktiv{opacity:1;visibility:visible;position:relative}
+.system-tafel .text{padding:52px 48px;display:grid;gap:18px;align-content:center}
+.system-tafel .text .kicker{margin-bottom:2px}
+.system-tafel .text p{color:var(--text-2);font-size:1.05rem}
+.system-tafel .text ul{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.system-tafel .text li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.system-tafel .text li svg{width:20px;height:20px;color:var(--gold);flex:none;margin-top:2px}
+.system-tafel .bild{position:relative;min-height:520px;overflow:hidden}
+.system-tafel .bild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:kenburns 18s ease-in-out infinite alternate}
+.system-tafel .bild .chip{position:absolute;left:20px;bottom:20px;font-size:13px;font-weight:700;padding:8px 12px;border-radius:var(--pille);background:rgba(0,0,23,.6);backdrop-filter:blur(8px);border:1px solid var(--linie-2);color:var(--text)}
+
+/* ---------- Motiv-Wähler ---------- */
+.motiv{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.motiv-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.motiv-chips button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;border-radius:var(--pille);border:1px solid var(--linie-2);background:rgba(255,255,255,.04);font-size:14.5px;font-weight:600;color:var(--text);transition:background var(--dauer),border-color var(--dauer),transform var(--dauer),color var(--dauer)}
+.motiv-chips button i{width:12px;height:14px;clip-path:var(--hex-hoch);background:rgba(255,255,255,.3);display:block;transition:background var(--dauer)}
+.motiv-chips button:hover{transform:translateY(-2px);border-color:rgba(248,184,0,.5)}
+.motiv-chips button.an{background:rgba(248,184,0,.16);border-color:var(--gold);color:var(--weiss)}
+.motiv-chips button.an i{background:var(--gold)}
+.motiv-chips button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.anzeige{position:sticky;top:calc(var(--kopf) + 20px);background:var(--karte);border:1px solid var(--linie-2);border-radius:var(--r);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.anzeige .kopfz{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--linie)}
+.anzeige .kopfz .avatar{width:38px;height:44px;clip-path:var(--hex-hoch);background:var(--gold);display:grid;place-items:center;font:800 13px var(--display);color:#12122e}
+.anzeige .kopfz b{display:block;font-size:14px}
+.anzeige .kopfz span{font-size:13px;color:var(--text-3)}
+.anzeige .bild{aspect-ratio:4/3;background:linear-gradient(160deg,#1c1c40,#0a0a24);position:relative;overflow:hidden}
+.anzeige .bild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.anzeige .bild .titel{position:absolute;left:20px;right:20px;bottom:20px;font-family:var(--display);font-weight:800;font-size:clamp(1.3rem,2vw,1.7rem);line-height:1.1;color:var(--weiss);text-shadow:0 4px 24px rgba(0,0,0,.7)}
+.anzeige .bild .titel em{color:var(--gold);font-style:normal}
+.anzeige .leer{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px;color:var(--text-2);font-size:15px;background:rgba(0,0,23,.9);border-radius:var(--r)}
+.anzeige .text{padding:18px 20px 20px;display:grid;gap:12px}
+.anzeige .text p{font-size:14.5px;color:var(--text-2);min-height:3.2em}
+.anzeige .text .cta{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--linie);padding-top:14px}
+.anzeige .text .cta .knopf{min-height:42px;padding:0 18px;font-size:14px}
+.anzeige .mess{display:flex;gap:16px;padding:14px 20px;border-top:1px solid var(--linie);background:rgba(248,184,0,.06);border-radius:var(--r)}
+.anzeige .mess div{display:grid;gap:2px}
+.anzeige .mess b{font-family:var(--display);font-size:1.25rem;color:var(--gold);line-height:1}
+.anzeige .mess span{font-size:13px;color:var(--text-3)}
+.motiv .merk{margin-top:26px;padding:18px 22px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);font-size:15px;color:var(--text-2);display:flex;gap:14px;align-items:flex-start}
+.motiv .merk svg{width:22px;height:22px;color:var(--gold);flex:none;margin-top:2px}
+
+/* ---------- Zahlen als Zellen ---------- */
+.zahlen{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--gap)}
+.zahlen .zahl{grid-column:span 2}.zahlen .zahl:nth-child(n+4):nth-last-child(-n+2){grid-column:span 3}
+.zahl{display:grid;gap:8px;padding:30px 28px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);position:relative;overflow:hidden;transition:transform var(--dauer) var(--ease),border-color var(--dauer)}
+.zahl:hover{transform:translateY(-4px);border-color:rgba(248,184,0,.45)}
+.zahl::before{content:"";position:absolute;right:-30px;bottom:-40px;width:150px;height:170px;background:var(--gold);clip-path:var(--hex-hoch);opacity:.07}
+.zahl b{font-family:var(--display);font-size:clamp(2.4rem,4vw,3.6rem);line-height:1;color:var(--gold);letter-spacing:-.02em}
+.zahl b small{font-size:.5em;color:var(--gold-hell)}
+.zahl span{font-size:15px;color:var(--text-2)}
+.zahl svg{width:26px;height:26px;color:var(--gold)}
+
+/* ---------- Wabenwand (Logos) ---------- */
+.wand{display:grid;gap:14px;max-width:1060px;margin-inline:auto}
+.wand .reihe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.logo-zelle{aspect-ratio:1/1.12;clip-path:var(--hex-hoch);background:var(--karte-2);display:grid;place-items:center;padding:16% 14%;position:relative;transition:background var(--dauer),transform var(--dauer) var(--ease)}
+.logo-zelle::before{content:"";position:absolute;inset:0;background:var(--gold);opacity:0;transition:opacity var(--dauer)}
+.logo-zelle:hover{background:#20204a;transform:translateY(-4px)}
+.logo-zelle:hover::before{opacity:.08}
+.logo-zelle img{position:relative;width:100%;height:100%;object-fit:contain;filter:brightness(1.05)}
+.wand-fuss{text-align:center;color:var(--text-3);font-size:14px;margin-top:24px}
+
+/* ---------- Ablauf: Stationen an der Bahn ---------- */
+.bahn{position:relative;margin-top:56px}
+.bahn .linie{position:absolute;left:0;right:0;top:44px;height:4px;background:var(--linie);border-radius:2px;overflow:hidden}
+.bahn .linie i{display:block;height:100%;width:100%;background:var(--gold);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .2s linear}
+.stationen{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px;position:relative}
+.station{display:grid;gap:12px;justify-items:center;text-align:center}
+.station .hexi{width:80px;height:92px;clip-path:var(--hex-hoch);background:var(--karte-2);border:1px solid var(--linie);display:grid;place-items:center;position:relative;transition:background .4s var(--ease),transform .4s var(--ease)}
+.station .hexi svg{width:30px;height:30px;color:var(--gold);transition:color .4s}
+.station.erreicht .hexi{background:var(--gold);transform:scale(1.06)}
+.station.erreicht .hexi svg{color:#12122e}
+.station .nr{font:800 13px var(--display);color:var(--gold);letter-spacing:.14em}
+.station b{font-family:var(--display);font-size:15px;color:var(--weiss);line-height:1.25}
+.station span{font-size:13.5px;color:var(--text-2);line-height:1.4}
+.station .dauer{font-size:13px;font-weight:700;color:var(--gold);padding:4px 10px;border-radius:var(--pille);background:rgba(248,184,0,.1)}
+
+/* ---------- Duo / Über uns ---------- */
+.duo{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:stretch}
+.duo.tausch > .bild{order:-1}
+.duo .text{display:grid;gap:18px;align-content:center;align-self:center}
+.duo .bild{display:flex;flex-direction:column;gap:var(--gap)}
+.duo .bild figure{margin:0;position:relative;border-radius:var(--r);overflow:hidden;background:var(--karte)}
+.duo .bild figure:last-child{flex:1;min-height:300px}
+.duo .bild figure:last-child img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.duo .bild img{width:100%;height:auto;display:block;transition:transform .8s var(--ease)}
+.duo .bild figure:hover img{transform:scale(1.04)}
+.duo .bild figure:only-child img{object-position:6% 40%}  /* Einzelfoto: volle Höhe, Ausschnitt auf die beiden Gründer links */
+.duo .bild .chip{position:absolute;left:18px;bottom:18px;font-size:13px;font-weight:700;padding:8px 12px;border-radius:var(--pille);background:rgba(0,0,23,.62);backdrop-filter:blur(8px);border:1px solid var(--linie-2)}
+.zitat{margin-top:12px;padding:22px 26px;border-left:4px solid var(--gold);background:var(--karte);border-radius:var(--r);font-size:1.05rem;color:var(--text)}
+.zitat footer{margin-top:12px;font-size:14px;color:var(--text-2);display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}.zitat footer b{white-space:nowrap}
+.zitat footer b{color:var(--gold)}
+.werte{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:56px}
+.wert{display:grid;gap:12px;padding:28px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);transition:transform var(--dauer) var(--ease),border-color var(--dauer)}
+.wert:hover{transform:translateY(-4px);border-color:rgba(248,184,0,.45)}
+.wert .hexi{width:56px;height:64px;clip-path:var(--hex-hoch);background:rgba(248,184,0,.14);display:grid;place-items:center}
+.wert .hexi svg{width:26px;height:26px;color:var(--gold)}
+.wert b{font-family:var(--display);font-size:1.1rem;color:var(--weiss)}
+.wert p{color:var(--text-2);font-size:15px}
+.video-karte{border-radius:var(--r);overflow:hidden;background:var(--karte);border:1px solid var(--linie-2);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.video-karte wistia-player{display:block;aspect-ratio:16/9;width:100%}
+.video-karte.gross{max-width:980px;margin-inline:auto}
+.video-karte .unter{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:14.5px;color:var(--text-2)}
+.video-karte .unter b{color:var(--weiss)}
+.galerie{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--gap);margin-top:var(--gap)}
+.galerie figure{margin:0;border-radius:var(--r);overflow:hidden;position:relative;background:var(--karte);min-height:320px}
+.galerie img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.galerie figure:hover img{transform:scale(1.04)}
+.galerie figcaption{position:absolute;left:0;right:0;bottom:0;padding:40px 20px 18px;background:linear-gradient(transparent,rgba(0,0,23,.85));font-size:14px;font-weight:600}
+
+/* ---------- Statement (wortweise, scroll-text) ---------- */
+.statement{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3.2vw,2.8rem);line-height:1.18;letter-spacing:-.015em;max-width:980px;margin-inline:auto;text-align:center}
+.statement .w{color:rgba(255,255,255,.42);transition:color .25s}
+.statement .w.an{color:var(--weiss)}
+.statement .w.gold.an{color:var(--gold)}
+
+/* ---------- FAQ: zwei Spalten ---------- */
+.faq{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:start}
+.faq .links{position:sticky;top:calc(var(--kopf) + 24px);display:grid;gap:18px}
+.faq .links .frage-fehlt{border-top:1px solid var(--linie);padding-top:22px;display:grid;gap:12px;justify-items:start;color:var(--text-2);font-size:15px}
+.faq details{border:1px solid var(--linie);border-radius:var(--r);background:var(--karte);overflow:hidden;transition:border-color var(--dauer)}
+.faq details + details{margin-top:12px}
+.faq details[open]{border-color:rgba(248,184,0,.5)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--weiss);min-height:64px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{width:34px;height:38px;clip-path:var(--hex-hoch);background:rgba(248,184,0,.14);display:grid;place-items:center;flex:none;color:var(--gold);transition:background var(--dauer),transform var(--dauer)}
+.faq details[open] summary .pm{background:var(--gold);color:#12122e;transform:rotate(180deg)}
+.faq summary .pm svg{width:16px;height:16px}
+.faq .antwort{padding:0 24px 22px;color:var(--text-2);font-size:15.5px;line-height:1.6}
+
+/* ---------- Rückruf-Block ---------- */
+.rueckruf{position:relative;border-radius:var(--r);overflow:hidden;background:linear-gradient(120deg,#8a6a00 0%,var(--gold) 55%,#ffd452 100%);color:#12122e;min-height:560px;display:grid;grid-template-columns:1.05fr .95fr;isolation:isolate}
+.rueckruf .text{padding:64px 56px;display:grid;gap:18px;align-content:center;z-index:2}
+.rueckruf h2{color:#12122e}
+.rueckruf .kicker{color:#12122e}
+.rueckruf .kicker::before{background:#12122e}
+.rueckruf .lead{color:#3c3c56}
+.rueckruf .person{position:relative;min-height:420px}
+.rueckruf .person img{position:absolute;right:0;bottom:0;height:100%;width:auto;max-width:none;object-fit:contain;object-position:right bottom}
+.rueckruf .wabe-deko{position:absolute;inset:0;z-index:0;opacity:.18;background-image:radial-gradient(circle at 20% 30%,#fff 0 2px,transparent 3px);background-size:26px 30px}
+.formular{display:grid;gap:14px;padding:32px;background:var(--karte);border:1px solid var(--linie-2);border-radius:var(--r);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.formular label{display:grid;gap:6px;font-size:13.5px;font-weight:700;color:var(--text-2)}
+.formular input,.formular select,.formular textarea{width:100%;min-height:50px;padding:12px 16px;border-radius:var(--r-klein);border:1px solid var(--linie-2);background:rgba(255,255,255,.05);color:var(--weiss);font:inherit;font-size:15px;transition:border-color var(--dauer),background var(--dauer)}
+.formular input:focus,.formular select:focus,.formular textarea:focus{outline:0;border-color:var(--gold);background:rgba(248,184,0,.06)}
+.formular textarea{min-height:110px;resize:vertical}
+.formular .zwei{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.formular .chips{display:flex;flex-wrap:wrap;gap:8px}
+.formular .chips button{min-height:40px;padding:0 14px;border-radius:var(--pille);border:1px solid var(--linie-2);font-size:14px;font-weight:600;transition:background var(--dauer),border-color var(--dauer)}
+.formular .chips button.an{background:rgba(248,184,0,.18);border-color:var(--gold);color:var(--weiss)}
+.formular .hinweis{font-size:13px;color:var(--text-3)}
+.formular .danke{display:none;padding:26px;border-radius:var(--r-klein);background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.4);color:var(--weiss);text-align:center;font-weight:600}
+.formular.gesendet .danke{display:block}
+.formular.gesendet .felder{display:none}
+.kontakt-info{display:grid;gap:18px;align-content:start}
+.kontakt-info .zeile{display:flex;gap:14px;align-items:center;padding:18px 20px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);min-height:64px;transition:border-color var(--dauer),transform var(--dauer)}
+.kontakt-info .zeile:hover{border-color:rgba(248,184,0,.45);transform:translateX(4px)}
+.kontakt-info .zeile svg{width:22px;height:22px;color:var(--gold);flex:none}
+.kontakt-info .zeile b{display:block;font-size:13px;color:var(--text-3);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.kontakt-info .zeile span{font-size:15.5px;color:var(--weiss)}
+.kontakt-raster{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:stretch}
+
+/* ---------- CTA-Band ---------- */
+.cta-band{position:relative;border-radius:var(--r);overflow:hidden;background:var(--karte-2);border:1px solid var(--linie-2);padding:72px 56px;display:grid;justify-items:center;text-align:center;gap:18px}
+.cta-band::before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 30% 30%,rgba(248,184,0,.22),transparent 40%),radial-gradient(circle at 75% 70%,rgba(248,184,0,.14),transparent 40%);pointer-events:none}
+.cta-band > *{position:relative}
+.cta-band .schritte{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.cta-band .schritte span{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:var(--pille);background:rgba(255,255,255,.06);border:1px solid var(--linie);font-size:14px;font-weight:600}
+.cta-band .schritte svg{width:16px;height:16px;color:var(--gold)}
+.cta-band .knoepfe{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+
+/* ---------- Fuß ---------- */
+.fuss{border-top:1px solid var(--linie);background:var(--tiefe);padding:64px 0 32px;margin-top:var(--sekt)}
+.fuss .oben{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px}
+.fuss .marke img{height:44px}
+.fuss .slogan{margin-top:16px;color:var(--text-2);font-size:15px;max-width:34ch}
+.fuss h4{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-family:var(--schrift)}
+.fuss ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.fuss li a{display:inline-flex;align-items:center;gap:10px;min-height:40px;color:var(--text-2);font-size:15px;transition:color var(--dauer)}
+.fuss li a:hover{color:var(--weiss)}
+.fuss li a svg{width:18px;height:18px;color:var(--gold);flex:none}
+.fuss .unten{margin-top:44px;padding-top:22px;border-top:1px solid var(--linie);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--text-3)}
+.fuss .sprachen{align-self:start}
+
+/* ---------- Rechtstexte ---------- */
+.recht{max-width:820px;margin-inline:auto;display:grid;gap:14px}
+.recht h2{font-size:1.6rem;margin-top:28px}
+.recht h3{font-size:1.1rem;margin-top:16px}
+.recht p{color:var(--text-2);font-size:15.5px}
+.recht .box{padding:18px 22px;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);font-size:14.5px;color:var(--text-2)}
+.recht address{font-style:normal;color:var(--text);line-height:1.7}
+
+/* ---------- Bewegung: Wabenblende, Logowelle, Stationen ---------- */
+.js .blende img{clip-path:polygon(50% 50%,50% 50%,50% 50%,50% 50%,50% 50%,50% 50%);transition:clip-path 1.1s var(--ease)}
+.js .blende.an img,.js .rv.an .blende img,.js .system-tafel.aktiv .blende img{clip-path:polygon(50% -60%,150% 25%,150% 75%,50% 160%,-50% 75%,-50% 25%)}
+.js .logo-zelle.rv{transition-delay:calc(var(--i,0) * 55ms)}
+.station.erreicht .hexi{animation:einrasten .6s var(--ease)}
+@keyframes einrasten{0%{transform:scale(.8)}60%{transform:scale(1.14)}100%{transform:scale(1.06)}}
+
+/* ---------- Reveal ---------- */
+.rv{opacity:1;transform:none}
+.js .rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.js .rv.an{opacity:1;transform:none}
+.js .rv.v2{transition-delay:.1s}.js .rv.v3{transition-delay:.2s}.js .rv.v4{transition-delay:.3s}.js .rv.v5{transition-delay:.4s}
+
+/* ---------- Intro ---------- */
+#intro{position:fixed;inset:0;z-index:100;background:var(--nacht);display:grid;place-items:center;transition:opacity .6s var(--ease),visibility .6s}
+#intro.zu{opacity:0;visibility:hidden}
+#intro .kern{display:grid;justify-items:center;gap:22px}
+#intro svg{width:120px;height:132px}
+#intro .z{fill:none;stroke:var(--gold);stroke-width:8;stroke-linejoin:round;stroke-dasharray:600;stroke-dashoffset:600}
+#intro.los .z{animation:zeichnen 1.1s var(--ease) forwards}
+#intro .f{fill:var(--gold);opacity:0}
+#intro.los .f{animation:fuellen .5s .9s var(--ease) forwards}
+#intro img{height:36px;opacity:0;transform:translateY(8px)}
+#intro.los img{animation:auf .6s 1.1s var(--ease) forwards}
+@keyframes zeichnen{to{stroke-dashoffset:0}}
+@keyframes fuellen{to{opacity:1}}
+@keyframes auf{to{opacity:1;transform:none}}
+
+/* ---------- Responsiv ---------- */
+@media (max-width:1180px){
+  .hero .wrap{grid-template-columns:minmax(0,1fr);padding-bottom:120px}
+  .wabe{max-width:440px;justify-self:center}
+  .zellen .g5{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .zellen .g5 .zelle-k:nth-child(4),.zellen .g5 .zelle-k:nth-child(5){grid-column:span 1}
+  .zellen .g5{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .zelle-k{grid-column:span 2}
+  .zellen .g5 .zelle-k:nth-child(4),.zellen .g5 .zelle-k:nth-child(5){grid-column:span 3}
+  .stationen{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:960px){
+  :root{--sekt:84px;--pad:24px;--kopf:72px;--rand:20px}
+  .nav{display:none}
+  .mobil-rechts{display:flex!important}
+  .burger{display:flex}
+  .hero{border-radius:0 0 var(--r-klein) var(--r-klein)}
+  .hero .wrap{padding-top:calc(var(--kopf) + 36px)}
+  .diagnose,.motiv,.duo,.faq,.kontakt-raster,.rueckruf{grid-template-columns:1fr}
+  .anzeigen{min-height:520px}
+  .anzeigen img{width:48%}
+  .anzeigen img:first-child{left:10%;transform:rotate(-3deg) translateY(var(--py,0))}
+  .anzeigen img:last-of-type{right:10%;transform:rotate(3deg) translateY(var(--py,0))}
+  .system-reiter{display:flex;flex-wrap:wrap}
+  .wege{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero-in > h1{max-width:none}
+  .duo.tausch > .bild{order:0}
+  .anzeigen{height:440px}
+  .anzeigen img{width:220px}
+  .system-tafel{grid-template-columns:1fr}
+  .system-tafel .bild{min-height:280px;order:-1}
+  .system-tafel .text{padding:32px 24px}
+  .anzeige{position:static}
+  .zahlen,.werte{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .zahlen .zahl,.zahlen .zahl:nth-child(n+4):nth-last-child(-n+2){grid-column:span 1}.zahlen .zahl:last-child:nth-child(odd){grid-column:1/-1}
+  .wand .reihe{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .bahn .linie{display:none}
+  .stationen{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fuss .oben{grid-template-columns:1fr 1fr}
+  .faq .links{position:static}
+  .rueckruf .text{padding:40px 24px}
+  .rueckruf .person{min-height:320px}
+  .galerie{grid-template-columns:1fr}
+  .cta-band{padding:48px 24px}
+}
+@media (max-width:640px){
+  .zellen .g5{grid-template-columns:1fr}
+  .zelle-k,.zellen .g5 .zelle-k:nth-child(4),.zellen .g5 .zelle-k:nth-child(5){grid-column:auto}
+  .zellen{margin-top:-60px}
+  .stationen,.zahlen,.werte{grid-template-columns:1fr}
+  .wege{grid-template-columns:1fr}
+  .system-reiter button{width:100%}
+  .sekt.tief{margin-inline:8px}
+  .fuss .oben{grid-template-columns:1fr}
+  .formular .zwei{grid-template-columns:1fr}
+  .anzeigen{height:380px}
+  .anzeigen img{width:180px}
+  .hero .fakten{gap:18px}
+}
+
+/* ---------- Bedienhilfen ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .hero video{display:none}
+  .hero .poster{display:block}
+  .js .rv{opacity:1;transform:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .kopf.fest::before,.drop,.zelle-k,.hero .pause,.wabe .hinweis{backdrop-filter:none;background:var(--nacht)}
+}
+@media (prefers-contrast:more){
+  .zelle-k,.weg,.zahl,.wert,.faq details,.formular,.kontakt-info .zeile{border-color:rgba(255,255,255,.5)}
+}
+
+/* ================================================================
+   3. Runde (25.09.2026): Bühne mit Regler · Laufschrift · Bento · Ruhelauf
+   ================================================================ */
+.scroll-leiste{position:fixed;top:0;left:0;height:3px;width:100%;z-index:70;background:linear-gradient(90deg,var(--gold-tief),var(--gold) 55%,var(--gold-hell));transform-origin:left;transform:scaleX(var(--scroll,0));pointer-events:none}
+
+/* ---------- Bühne ---------- */
+.buehne-wrap{margin-top:-72px;position:relative;z-index:3;padding-bottom:0}
+.buehne{position:relative;background:var(--karte);border:1px solid var(--linie-2);border-radius:var(--r);clip-path:inset(0 6% round var(--r));min-height:640px;overflow:hidden;will-change:clip-path;isolation:isolate;box-shadow:0 40px 100px rgba(0,0,0,.55)}
+.buehne::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 20% 70%,rgba(248,184,0,.16),transparent 70%),radial-gradient(50% 60% at 80% 40%,rgba(248,184,0,.1),transparent 70%);z-index:0}
+.buehne .raster{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(70% 70% at 50% 50%,#000 30%,transparent 100%);z-index:0}
+.buehne .live{position:absolute;left:50%;top:22px;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--pille);background:rgba(0,0,23,.7);border:1px solid var(--linie-2);font-size:13px;font-weight:700;color:var(--text);white-space:nowrap}
+.buehne .live i{width:8px;height:8px;border-radius:50%;background:var(--gruen);animation:puls 1.8s ease-out infinite}
+@keyframes puls{0%{box-shadow:0 0 0 0 rgba(61,220,151,.6)}70%{box-shadow:0 0 0 10px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
+.buehne-innen{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr);align-items:end;gap:28px;padding:84px 40px 0;min-height:0}
+.buehne-wrap + .zellen{margin-top:48px}
+.buehne .ankunft{min-width:0}
+.ticket > span:nth-child(2){min-width:0}
+.ticket small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.buehne .feed{position:relative;align-self:end;mask-image:linear-gradient(180deg,#000 82%,transparent 100%);padding-bottom:36px}
+.buehne .feed .etikett{top:auto;bottom:34px}
+.buehne .feed img{width:100%;height:auto;transform:translateY(24px) rotate(-3deg);transform-origin:bottom center;transition:transform .6s var(--ease)}
+.buehne:hover .feed img{transform:translateY(16px) rotate(-1deg)}
+.buehne .etikett{position:absolute;left:14px;top:14px;z-index:3;padding:7px 12px;border-radius:var(--pille);font-size:13px;font-weight:700;color:var(--weiss);background:rgba(0,0,23,.72);backdrop-filter:blur(6px);display:inline-flex;align-items:center;gap:7px;border:1px solid var(--linie)}
+.buehne .etikett i{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.buehne .ankunft{position:relative;padding:54px 0 40px;align-self:center}
+.buehne .ankunft .etikett{top:8px}
+.buehne .ankunft .beispiel{display:block;margin-top:10px;font-size:13px;color:var(--text-3)}
+.regler-box{display:grid;justify-items:center;gap:10px;padding-bottom:40px}
+.regler-box .kicker{margin-bottom:4px}
+.regler{position:relative;width:min(360px,40vw);aspect-ratio:1;user-select:none;touch-action:none;cursor:grab}
+.regler:active{cursor:grabbing}
+.regler svg{width:100%;height:100%;overflow:visible}
+.regler .skala{stroke:rgba(255,255,255,.12);stroke-width:14;fill:none;stroke-linecap:round}
+.regler .bahn{stroke:url(#reglerVerlauf);stroke-width:14;fill:none;stroke-linecap:round;stroke-dasharray:var(--bahn-l,1000);stroke-dashoffset:calc(var(--bahn-l,1000) * (1 - var(--p,0)));transition:stroke-dashoffset .15s linear}
+.regler .ticks line{stroke:rgba(255,255,255,.28);stroke-width:2;stroke-linecap:round}
+.regler .nabe{fill:#181838;stroke:rgba(248,184,0,.45);stroke-width:2}
+.regler .aussen{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:6 8;opacity:.35;transform-origin:200px 200px;animation:dreh 36s linear infinite}
+.regler .nadel{transform-origin:200px 200px;transform:rotate(calc(-135deg + var(--p,0) * 270deg));transition:transform .15s linear}
+.regler .nadel line{stroke:#fff;stroke-width:5;stroke-linecap:round}
+.regler .wert{font-family:var(--display);font-weight:800;font-size:60px;letter-spacing:-.04em;fill:#fff;text-anchor:middle}
+.regler .wert-label{font-family:var(--schrift);font-weight:600;font-size:13.5px;fill:rgba(255,255,255,.78);text-anchor:middle}
+.regler .pol{font-family:var(--schrift);font-weight:800;font-size:13px;fill:rgba(255,255,255,.8);text-anchor:middle;letter-spacing:.08em}
+.regler .pol.rechts{fill:var(--gold)}
+.regler:focus-visible{outline:3px solid var(--gold);outline-offset:6px;border-radius:50%}
+.regler-hint{text-align:center;font-size:13.5px;color:var(--text-2);max-width:30ch;margin-top:-14px}
+.regler-hint b{color:var(--gold)}
+.buehne.reg-links .ankunft,.buehne.reg-links .feed{opacity:.5;filter:saturate(.5)}
+.buehne .ankunft,.buehne .feed{transition:opacity .5s,filter .5s}
+
+/* Tickets */
+.tickets{position:relative;display:grid;gap:8px;z-index:1;margin-top:6px}
+.ticket{display:flex;align-items:center;gap:12px;overflow:hidden;min-width:0;background:rgba(255,255,255,.06);border:1px solid var(--linie);border-radius:var(--r);padding:11px 14px;font-size:13.5px;transform:translateX(24px);opacity:0;transition:transform .6s var(--ease),opacity .5s,background var(--dauer);transition-delay:var(--d,0s)}
+.sichtbar .ticket{transform:none;opacity:1}
+.ticket:hover{background:rgba(248,184,0,.1)}
+.ticket .tic{width:34px;height:38px;clip-path:var(--hex-hoch);display:grid;place-items:center;background:rgba(248,184,0,.16);color:var(--gold);flex:none}
+.ticket .tic svg{width:18px;height:18px}
+.ticket b{display:block;font-size:14px;color:var(--weiss)}
+.ticket small{color:var(--text-2);font-size:13px}
+.ticket .ok{margin-left:auto;font-size:13px;font-weight:700;color:var(--gruen);border:1px solid rgba(61,220,151,.4);border-radius:var(--pille);padding:4px 9px;white-space:nowrap}
+.ticket.neu{animation:ticketNeu .7s var(--ease)}
+@keyframes ticketNeu{0%{transform:translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
+
+/* ---------- Laufschrift ---------- */
+.kinetik{padding:56px 0 24px;overflow:hidden;white-space:nowrap}
+.kinetik + .sekt.tief{margin-top:calc(var(--sekt) * .5)}  /* Laufband nie direkt am dunklen Band */
+.kinetik > div{overflow:hidden}
+.kinetik .zeile{font-family:var(--display);font-weight:900;letter-spacing:-.04em;font-size:clamp(56px,9vw,140px);line-height:1.05;display:inline-block;color:var(--weiss);animation:marq 42s linear infinite;will-change:transform}
+.kinetik .zeile.kontur{-webkit-text-stroke:1.5px rgba(255,255,255,.7);color:transparent;font-weight:800;letter-spacing:-.02em;animation-direction:reverse;animation-duration:54s}
+.kinetik .zeile.kontur b{-webkit-text-stroke:0;color:var(--gold);font-weight:900}
+.kinetik .sep{color:var(--gold);margin:0 .25em}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- Bento: Ankommen ---------- */
+.bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(300px,auto);gap:var(--gap)}
+.zelle{position:relative;border-radius:var(--r);background:var(--karte);border:1px solid var(--linie);overflow:hidden;padding:28px;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;transition:transform .45s var(--ease),border-color .3s,box-shadow .45s var(--ease)}
+.zelle:hover{transform:translateY(-5px);border-color:rgba(248,184,0,.5);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.zelle .nr{position:relative;font:800 13px var(--display);color:var(--gold);letter-spacing:.14em;margin-bottom:8px;z-index:1}
+.zelle h3{position:relative;z-index:1;margin-bottom:8px}
+.zelle p{position:relative;z-index:1;color:var(--text-2);font-size:15px;max-width:46ch}
+.zelle .bild{position:absolute;inset:0;z-index:0}
+.zelle .bild img{width:100%;height:100%;object-fit:cover;object-position:right center;transition:transform .8s var(--ease)}
+.zelle:hover .bild img{transform:scale(1.04)}
+.zelle .bild::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,23,.1) 20%,rgba(0,0,23,.94) 78%)}
+.zelle.hoch{min-height:440px}
+.zelle .mini-phone{position:absolute;right:26px;top:26px;width:170px;z-index:1;transform:rotate(4deg);transition:transform .5s var(--ease);filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
+.zelle:hover .mini-phone{transform:rotate(0) translateY(-6px)}
+.zelle .mini-phone img{width:100%;height:auto;animation:schweben 6s ease-in-out infinite alternate}
+@keyframes schweben{to{transform:translateY(-10px)}}
+.zelle.mit-phone{padding-right:230px}
+.umkreis{position:absolute;right:-30px;top:-30px;width:320px;height:320px;z-index:0;opacity:.95}
+.umkreis circle.r{fill:none;stroke:rgba(255,255,255,.14);stroke-width:1.5}
+.umkreis .r.aktiv{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 7;animation:dreh 40s linear infinite;transform-origin:160px 160px}
+.umkreis .pin{fill:rgba(255,255,255,.7);animation:pinPuls 3s ease-in-out infinite}
+.umkreis .pin:nth-child(odd){animation-delay:1.5s}
+.umkreis .haus{fill:var(--gold)}
+.umkreis .puls{fill:none;stroke:var(--gold);stroke-width:2;transform-origin:160px 160px;animation:umkreisPuls 2.8s var(--ease) infinite}
+@keyframes umkreisPuls{0%{transform:scale(.2);opacity:.9}100%{transform:scale(1);opacity:0}}
+@keyframes pinPuls{0%,100%{transform:scale(1);fill:rgba(255,255,255,.55)}50%{transform:scale(1.6);fill:var(--gold)}}
+.umkreis .pin{transform-box:fill-box;transform-origin:center}
+.zelle.mit-tunnel{justify-content:flex-start;gap:0}
+.zelle.mit-tunnel h3{margin-top:auto}
+.tunnel-lauf{position:relative;margin:6px 0 30px;z-index:1}
+.tunnel-lauf .spur{height:8px;border-radius:4px;background:var(--linie);overflow:hidden}
+.tunnel-lauf .spur i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gold-tief),var(--gold),var(--gold-hell));transform-origin:left;animation:tunnelLauf 6s var(--ease) infinite}
+.tunnel-lauf .stufen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.tunnel-lauf .stufe{display:grid;justify-items:start;gap:6px;font-size:13px;font-weight:700;color:var(--text-2);animation:stufeAn 6s var(--ease) infinite;animation-delay:calc(var(--k) * 1.2s)}
+.tunnel-lauf .stufe i{width:22px;height:25px;clip-path:var(--hex-hoch);background:rgba(255,255,255,.1);display:grid;place-items:center;color:transparent;animation:stufeHex 6s var(--ease) infinite;animation-delay:calc(var(--k) * 1.2s)}
+.tunnel-lauf .stufe i svg{width:14px;height:14px}
+@keyframes tunnelLauf{0%{transform:scaleX(0)}70%{transform:scaleX(1)}92%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@keyframes stufeAn{0%,12%{color:var(--text-2)}18%,88%{color:var(--weiss)}100%{color:var(--text-2)}}
+@keyframes stufeHex{0%,12%{background:rgba(255,255,255,.1);color:transparent}18%,88%{background:var(--gold);color:#12122e}100%{background:rgba(255,255,255,.1);color:transparent}}
+
+/* ---------- Ruhelauf: Paket auf der Ablauf-Bahn, Zelle springt zum Reiter ---------- */
+.bahn .linie{overflow:visible}
+.bahn .linie .paket{position:absolute;top:50%;left:0;width:14px;height:16px;clip-path:var(--hex-hoch);background:var(--gold-hell);transform:translate(-50%,-50%);opacity:0;box-shadow:0 0 18px rgba(248,184,0,.8)}
+.bahn.laeuft .linie .paket{animation:paket 5s linear infinite;opacity:1}
+@keyframes paket{0%{left:0;opacity:0}6%{opacity:1}94%{opacity:1}100%{left:100%;opacity:0}}
+.js .zelle-k .nr::after{content:"";display:inline-block;width:6px;height:7px;margin-left:8px;clip-path:var(--hex-hoch);background:var(--gold);opacity:0;transform:translateY(-1px);transition:opacity var(--dauer)}
+.js .zelle-k:hover .nr::after{opacity:1}
+.zahl:hover svg,.wert:hover .hexi svg,.station:hover .hexi svg{animation:wippen .6s var(--ease)}
+@keyframes wippen{0%{transform:scale(1)}50%{transform:scale(1.2) rotate(-6deg)}100%{transform:scale(1)}}
+.kopf .marke img{transition:transform var(--dauer) var(--ease)}
+.kopf .marke:hover img{transform:scale(1.04)}
+.diagnose-liste div svg{transition:transform var(--dauer)}
+.diagnose-liste div:hover svg{transform:rotate(90deg)}
+.hero .fakten b{display:inline-block;transition:transform var(--dauer) var(--ease)}
+.hero .fakten div:hover b{transform:translateY(-3px)}
+.faq details summary .pm{transition:background var(--dauer),transform var(--dauer),color var(--dauer)}
+.faq details:not([open]) summary:hover .pm{background:rgba(248,184,0,.3)}
+
+/* ---------- Responsiv, 3. Runde ---------- */
+@media (max-width:1180px){
+  .buehne-innen{grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:64px 32px 0}
+  .buehne .regler-box{grid-column:1/-1;order:-1}
+  .buehne .ankunft{padding:44px 0 32px}
+}
+@media (max-width:960px){
+  .buehne-wrap{margin-top:-56px}
+  .buehne{clip-path:none;min-height:0}
+  .buehne-innen{grid-template-columns:minmax(0,1fr);padding:96px 18px 0;min-height:0}
+  .buehne .live{top:20px;width:max-content;max-width:calc(100% - 36px)}
+  .ticket{padding:10px 12px;gap:10px}
+  .ticket .ok{font-size:13px;padding:4px 7px}
+  .buehne .feed{max-width:440px;margin-inline:auto}
+  .buehne .feed img{transform:none}
+  .zelle.mit-phone{padding-right:28px;padding-top:320px}
+  .zelle .mini-phone{right:auto;left:28px;top:26px;width:150px}
+  .umkreis{right:-60px;top:-60px;width:260px;height:260px}
+  .kinetik{padding:40px 0 10px}
+}
+@media (max-width:640px){
+  .bento{grid-template-columns:1fr}
+  .regler{width:min(340px,82vw)}
+  .buehne .live{white-space:normal;text-align:center}
+  .tunnel-lauf .stufen{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  .kinetik .zeile,.regler .aussen,.umkreis .r.aktiv,.umkreis .puls,.umkreis .pin,.tunnel-lauf .spur i,.tunnel-lauf .stufe,.tunnel-lauf .stufe i,.bahn .linie .paket,.zelle .mini-phone img,.buehne .live i{animation:none!important}
+  .sichtbar .ticket,.ticket{transform:none;opacity:1}
+  .buehne{clip-path:none}
+  .tunnel-lauf .spur i{transform:none}
+  .tunnel-lauf .stufe i{background:var(--gold);color:#12122e}
+}
+
+/* ---------- Ruhelauf je Abschnitt (Stillstands-Prüfer, 25.09.2026): Form und Lage bewegen sich, nie nur Farbe ---------- */
+@keyframes drift{0%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-14px,10px) rotate(8deg)}100%{transform:translate(0,0) rotate(0deg)}}
+@keyframes kenburns{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.07) translate(-1.5%,1%)}}
+@keyframes wobbel{0%,100%{transform:translate(-50%,-50%) rotate(-8deg) scale(1)}50%{transform:translate(-50%,-50%) rotate(-4deg) scale(1.06)}}
+@keyframes muster{to{background-position:52px 60px}}
+.anzeigen img:first-child{animation:schweben 7s ease-in-out infinite alternate}
+.anzeigen img:last-of-type{animation:schweben 9s ease-in-out infinite alternate-reverse}
+.anzeigen .stempel{animation:wobbel 4s ease-in-out infinite}
+.zahl::before{animation:drift 12s ease-in-out infinite;transform-origin:center}
+.zahl:nth-child(even)::before{animation-duration:15s;animation-delay:-6s}
+.zelle-k::after{animation:drift 14s ease-in-out infinite}
+.sekt:has(> .wrap > .statement){overflow:hidden}
+.statement-hex{position:absolute;left:50%;top:50%;width:640px;height:720px;transform:translate(-50%,-50%);background:var(--gold);opacity:.05;clip-path:var(--hex-hoch);pointer-events:none;animation:hexDreh 60s linear infinite}
+@keyframes hexDreh{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.duo .bild figure img,.galerie img{animation:kenburns 22s ease-in-out infinite alternate}
+.duo .bild figure:nth-child(2) img{animation-duration:26s;animation-delay:-9s}
+.wert .hexi{animation:schweben 6s ease-in-out infinite alternate}
+.wert:nth-child(2) .hexi{animation-delay:-2s}.wert:nth-child(3) .hexi{animation-delay:-4s}
+.faq .links{position:relative}
+.faq-hex{position:absolute;right:-40px;bottom:-60px;width:220px;height:250px;clip-path:var(--hex-hoch);background:var(--gold);opacity:.07;pointer-events:none;animation:drift 16s ease-in-out infinite}
+.rueckruf .wabe-deko{animation:muster 9s linear infinite}
+.rueckruf .person img{animation:schweben 8s ease-in-out infinite alternate}
+.kontakt-info .zeile svg{animation:schweben 5s ease-in-out infinite alternate}
+.kontakt-info .zeile:nth-child(odd) svg{animation-delay:-2.5s}
+.formular{position:relative;overflow:hidden}
+.formular::before{content:"";position:absolute;right:-60px;top:-70px;width:240px;height:270px;clip-path:var(--hex-hoch);background:var(--gold);opacity:.06;pointer-events:none;animation:drift 18s ease-in-out infinite}
+.formular > *{position:relative}
+.cta-band::before{animation:drift 20s ease-in-out infinite}
+.station .hexi{animation:schweben 6s ease-in-out infinite alternate}
+.station:nth-child(even) .hexi{animation-delay:-3s}
+.station.erreicht .hexi{animation:einrasten .6s var(--ease),schweben 6s ease-in-out .6s infinite alternate}
+.weg .hexi{animation:schweben 6s ease-in-out infinite alternate}
+.weg:nth-child(even) .hexi{animation-delay:-3s}
+.faq details[open] .pm svg{animation:wippen 3s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){
+  .anzeigen img,.anzeigen .stempel,.zahl::before,.zelle-k::after,.statement-hex,.duo .bild figure img,.galerie img,.wert .hexi,.faq-hex,.rueckruf .wabe-deko,.rueckruf .person img,.kontakt-info .zeile svg,.formular::before,.cta-band::before,.station .hexi,.weg .hexi,.faq details[open] .pm svg,.system-tafel .bild img{animation:none!important}
+}
+@media (max-width:760px){.hero.hero-ueber::before{background:linear-gradient(0deg,var(--nacht) 0%,rgba(0,0,23,.88) 34%,rgba(0,0,23,.25) 62%,rgba(0,0,23,.1) 100%)}}  /* Handy: Text auf dem Gründerfoto lesbar */

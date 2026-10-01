@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hista-digital.com/sitemap.xml
