@@ -282,7 +282,7 @@
   document.querySelectorAll('.formular').forEach(f => {
     f.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { b.classList.toggle('an'); b.setAttribute('aria-pressed', b.classList.contains('an')); }));
     const senden = f.querySelector('[data-senden]');
-    /* Versand über FormSubmit an info@hista-digital.com (01.10.2026). Erst nach dem Versand „Danke". */
+    /* Versand über FormSubmit an benedikt.klosa@hista-digital.com (01.10.2026). Erst nach dem Versand „Danke". */
     if (senden) senden.addEventListener('click', async () => {
       const wert = n => (f.querySelector(`[name="${n}"]`) || {}).value?.trim() || '';
       const tel = f.querySelector('[name="telefon"]');
@@ -294,12 +294,12 @@
       if (wert('mail')) daten._replyto = wert('mail');
       senden.disabled = true;
       try {
-        const r = await fetch('https://formsubmit.co/ajax/info@hista-digital.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(daten) });
+        const r = await fetch('https://formsubmit.co/ajax/benedikt.klosa@hista-digital.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(daten) });
         if (!r.ok) throw new Error(r.status);
         f.classList.add('gesendet'); f.querySelector('.danke').scrollIntoView({ block: 'center', behavior: reduziert ? 'auto' : 'smooth' });
       } catch (e) {
         senden.disabled = false;
-        location.href = 'mailto:info@hista-digital.com?subject=' + encodeURIComponent('Rückruf-Anfrage') + '&body=' + encodeURIComponent(Object.entries(daten).filter(([k]) => !k.startsWith('_')).map(([k, v]) => k + ': ' + v).join('\n'));
+        location.href = 'mailto:benedikt.klosa@hista-digital.com?subject=' + encodeURIComponent('Rückruf-Anfrage') + '&body=' + encodeURIComponent(Object.entries(daten).filter(([k]) => !k.startsWith('_')).map(([k, v]) => k + ': ' + v).join('\n'));
       }
     });
   });
