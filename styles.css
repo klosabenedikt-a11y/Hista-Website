@@ -707,3 +707,6 @@ body.menu-offen{overflow:hidden}
   .anzeigen img,.anzeigen .stempel,.zahl::before,.zelle-k::after,.statement-hex,.duo .bild figure img,.galerie img,.wert .hexi,.faq-hex,.rueckruf .wabe-deko,.rueckruf .person img,.kontakt-info .zeile svg,.formular::before,.cta-band::before,.station .hexi,.weg .hexi,.faq details[open] .pm svg,.system-tafel .bild img{animation:none!important}
 }
 @media (max-width:760px){.hero.hero-ueber::before{background:linear-gradient(0deg,var(--nacht) 0%,rgba(0,0,23,.88) 34%,rgba(0,0,23,.25) 62%,rgba(0,0,23,.1) 100%)}}  /* Handy: Text auf dem Gründerfoto lesbar */
+
+/* Pflichtfelder nach erstem Absendeversuch (01.10.2026) */
+.formular.pflicht input:invalid{border-color:#e5484d;box-shadow:0 0 0 1px #e5484d}

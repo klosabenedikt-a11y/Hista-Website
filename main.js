@@ -278,11 +278,30 @@
     if (reduziert) worte.forEach(w => w.classList.add('an'));
   }
 
-  /* ---------- Formular (Attrappe) + Chips ---------- */
+  /* ---------- Formular + Chips ---------- */
   document.querySelectorAll('.formular').forEach(f => {
     f.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { b.classList.toggle('an'); b.setAttribute('aria-pressed', b.classList.contains('an')); }));
     const senden = f.querySelector('[data-senden]');
-    if (senden) senden.addEventListener('click', () => { f.classList.add('gesendet'); f.querySelector('.danke').scrollIntoView({ block: 'center', behavior: reduziert ? 'auto' : 'smooth' }); });
+    /* Versand über FormSubmit an info@hista-digital.com (01.10.2026). Erst nach dem Versand „Danke". */
+    if (senden) senden.addEventListener('click', async () => {
+      const wert = n => (f.querySelector(`[name="${n}"]`) || {}).value?.trim() || '';
+      const tel = f.querySelector('[name="telefon"]');
+      if (!wert('name') || !wert('telefon')) { (wert('name') ? tel : f.querySelector('[name="name"]')).focus(); f.classList.add('pflicht'); return; }
+      const chips = [...f.querySelectorAll('.chips')].map(c => [...c.querySelectorAll('button.an')].map(b => b.textContent.trim()).join(', '));
+      const daten = { Name: wert('name'), Betrieb: wert('firma'), Telefon: wert('telefon'), 'E-Mail': wert('mail'),
+        Gewerk: chips[0] || '', Erreichbar: chips[1] || '', Nachricht: wert('nachricht'), Seite: location.href,
+        _subject: 'Rückruf-Anfrage über hista-digital.com', _template: 'table', _captcha: 'false' };
+      if (wert('mail')) daten._replyto = wert('mail');
+      senden.disabled = true;
+      try {
+        const r = await fetch('https://formsubmit.co/ajax/info@hista-digital.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(daten) });
+        if (!r.ok) throw new Error(r.status);
+        f.classList.add('gesendet'); f.querySelector('.danke').scrollIntoView({ block: 'center', behavior: reduziert ? 'auto' : 'smooth' });
+      } catch (e) {
+        senden.disabled = false;
+        location.href = 'mailto:info@hista-digital.com?subject=' + encodeURIComponent('Rückruf-Anfrage') + '&body=' + encodeURIComponent(Object.entries(daten).filter(([k]) => !k.startsWith('_')).map(([k, v]) => k + ': ' + v).join('\n'));
+      }
+    });
   });
 
   /* ---------- Jahr ---------- */
